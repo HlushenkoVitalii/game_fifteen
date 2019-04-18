@@ -8,29 +8,33 @@ let container = document.getElementById('game');
 
 
 
-container.addEventListener('click', checkTile);
+container.addEventListener('select', checkTile);
 
 
 function viewGame(numbers) {
     let tilesView = '';
     let allTiles = '';
+    let numberTile = 0;
+
     for (let i = 0; i < numbers.length; i++) {
         let tile = numbers[i];
         let number = i + 1;
-        tilesView += collectTile(tile, number);
+        numberTile++;
+        tilesView += collectTile(tile, number, numberTile);
         if (!(number % 4)) {
             allTiles += collectRow(tilesView);
             tilesView = '';
+            numberTile = 0;
         }
     }
     container.innerHTML = allTiles;
 
 
-    function collectTile(tile, number) {
+    function collectTile(tile, number, numberTile) {
         if (tile === 'clear') {
-            return `<div class="tile clear" data-index="${number}"></div>`;
+            return `<div class="tile clear" data-number="${numberTile}" data-index="${number}"></div>`;
         }
-        return `<div class="tile" data-index="${number}">${tile}</div>`;
+        return `<div class="tile" data-number="${numberTile}" data-index="${number}">${tile}</div>`;
 
     }
     
@@ -44,10 +48,27 @@ viewGame(numbers);
 
 
 
-// function checkTile() {
-//     let clearTile = document.querySelector('.tile.clear').parentElement;
-//     console.log(clearTile.nodeType);
+function checkTile(event) {
+    let clearTile = document.querySelector('.tile.clear');
+    let selectTile = event.target;
+    if (clearTile.previousSibling === selectTile || clearTile.nextSibling === selectTile) {
+        moveTile(selectTile);
+    }
+    else {
+        let clearTileRow = clearTile.parentElement;
+        let selectTileRow = selectTile.parentElement;
+
+        if (clearTileRow.previousSibling === selectTileRow || clearTileRow.nextSibling === selectTileRow ) {
+            let numberTileClear = clearTile.getAttribute('data-number');
+            let numberTileClick = selectTile.getAttribute('data-number');
+            if (numberTileClear === numberTileClick) {
+                moveTile(selectTile);
+            }
+        }
+    }
+}
+
+// function moveTile() {
 //
-// };
-//
+// }
 // checkTile();
