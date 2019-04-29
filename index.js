@@ -1,20 +1,17 @@
 'use strict'
 
-let forCheck = '123456789101112131415clear';
-
-let numbers = [1,2,3,4,5,6,7,8,9,10,'clear',11,12,13,14,15];
+let numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,'clear'];
 
 let container = document.getElementById('game');
+let startButton = document.querySelector('button');
 
-
-
-container.addEventListener('select', checkTile);
-
+container.addEventListener('click', checkTile);
+startButton.addEventListener('click', shuffleArray);
 
 function viewGame(numbers) {
     let tilesView = '';
     let allTiles = '';
-    let numberTile = 0;
+    let numberTile = -1;
 
     for (let i = 0; i < numbers.length; i++) {
         let tile = numbers[i];
@@ -24,7 +21,7 @@ function viewGame(numbers) {
         if (!(number % 4)) {
             allTiles += collectRow(tilesView);
             tilesView = '';
-            numberTile = 0;
+            numberTile = -1;
         }
     }
     container.innerHTML = allTiles;
@@ -32,7 +29,7 @@ function viewGame(numbers) {
 
     function collectTile(tile, number, numberTile) {
         if (tile === 'clear') {
-            return `<div class="tile clear" data-number="${numberTile}" data-index="${number}"></div>`;
+            return `<div class="tile clear" data-number="${numberTile}" data-index="${number}">clear</div>`;
         }
         return `<div class="tile" data-number="${numberTile}" data-index="${number}">${tile}</div>`;
 
@@ -44,31 +41,70 @@ function viewGame(numbers) {
 
 }
 
+
+function shuffleArray() {
+    for (let i = numbers.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        let temp = numbers[i];
+        numbers[i] = numbers[j];
+        numbers[j] = temp;
+    }
+    viewGame(numbers);
+}
+
+
 viewGame(numbers);
+
 
 
 
 function checkTile(event) {
     let clearTile = document.querySelector('.tile.clear');
     let selectTile = event.target;
+
+    let clearTileRow = clearTile.parentElement;
+    let selectTileRow = selectTile.parentElement;
+
+    let numberTileClear = clearTile.getAttribute('data-number');
+    let numberTileSelect = selectTile.getAttribute('data-number');
+
     if (clearTile.previousSibling === selectTile || clearTile.nextSibling === selectTile) {
-        moveTile(selectTile);
+        moveTile(clearTile, clearTileRow, selectTile, selectTileRow, numberTileClear, numberTileSelect);
     }
     else {
-        let clearTileRow = clearTile.parentElement;
-        let selectTileRow = selectTile.parentElement;
-
         if (clearTileRow.previousSibling === selectTileRow || clearTileRow.nextSibling === selectTileRow ) {
-            let numberTileClear = clearTile.getAttribute('data-number');
-            let numberTileClick = selectTile.getAttribute('data-number');
-            if (numberTileClear === numberTileClick) {
-                moveTile(selectTile);
+            if (numberTileClear === numberTileSelect) {
+                moveTile(clearTile, clearTileRow, selectTile, selectTileRow, numberTileClear, numberTileSelect);
             }
         }
     }
 }
 
-// function moveTile() {
-//
-// }
-// checkTile();
+function moveTile(clearTile, clearTileRow, selectTile, selectTileRow, numberTileClear, numberTileSelect) {
+    let cloneClearTile = clearTile.cloneNode(true);
+    let cloneSelectTile = selectTile.cloneNode(true);
+    cloneClearTile.dataset.number = numberTileSelect;
+    cloneSelectTile.dataset.number = numberTileClear;
+
+    clearTileRow.replaceChild(cloneSelectTile, clearTile);
+    selectTileRow.replaceChild(cloneClearTile, selectTile);
+    checkGame();
+}
+
+function checkGame() {
+    let forCheck = '123456789101112131415clear';
+    let allTiles = document.getElementsByClassName('tile');
+    let allNumbers = '';
+    for (let i = 0; i < allTiles.length; i++) {
+        let number = allTiles[i].innerHTML;
+        allNumbers += number;
+    }
+    if (forCheck === allNumbers) {
+        alert('ПОЛУЧИЛОСЬ');
+    }
+
+}
+
+
+
+
