@@ -4,9 +4,13 @@ let numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,'clear'];
 
 let container = document.getElementById('game');
 let startButton = document.querySelector('button');
+let checkButton = document.querySelector('.checkButton');
+let congratulations = document.querySelector('.endGame');
+
 
 container.addEventListener('click', checkTile);
 startButton.addEventListener('click', shuffleArray);
+checkButton.addEventListener('click', checkGame);
 
 function viewGame(numbers) {
     let tilesView = '';
@@ -29,9 +33,9 @@ function viewGame(numbers) {
 
     function collectTile(tile, number, numberTile) {
         if (tile === 'clear') {
-            return `<div class="tile clear" data-number="${numberTile}" data-index="${number}">clear</div>`;
+            return `<div class="tile clear" data-number="${numberTile}">clear</div>`;
         }
-        return `<div class="tile" data-number="${numberTile}" data-index="${number}">${tile}</div>`;
+        return `<div class="tile" data-number="${numberTile}">${tile}</div>`;
 
     }
     
@@ -43,12 +47,14 @@ function viewGame(numbers) {
 
 
 function shuffleArray() {
+    congratulations.style.opacity = '0';
     for (let i = numbers.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         let temp = numbers[i];
         numbers[i] = numbers[j];
         numbers[j] = temp;
     }
+
     viewGame(numbers);
 }
 
@@ -88,10 +94,10 @@ function moveTile(clearTile, clearTileRow, selectTile, selectTileRow, numberTile
 
     clearTileRow.replaceChild(cloneSelectTile, clearTile);
     selectTileRow.replaceChild(cloneClearTile, selectTile);
-    checkGame();
+    endGame();
 }
 
-function checkGame() {
+function endGame() {
     let forCheck = '123456789101112131415clear';
     let allTiles = document.getElementsByClassName('tile');
     let allNumbers = '';
@@ -100,10 +106,17 @@ function checkGame() {
         allNumbers += number;
     }
     if (forCheck === allNumbers) {
-        alert('ПОЛУЧИЛОСЬ');
+        congratulations.style.opacity = '1';
     }
 
 }
+
+function checkGame() {
+    numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,'clear',15];
+    viewGame(numbers);
+}
+
+
 
 
 
