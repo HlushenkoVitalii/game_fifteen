@@ -6,15 +6,30 @@
     align-items: center;
 
 }
+
 .logo {
     text-align: center;
     margin: 20px auto 0 auto;
     font-size: 40px;
 }
+
 .button {
     text-align: center;
     margin: 10px auto;
     font-size: 25px;
+}
+
+.endGame {
+    position: absolute;
+    width: 400px;
+    height: 50px;
+    background-color: black;
+    text-align: center;
+    color: white;
+    font-size: 40px;
+    border: 1px solid white;
+    opacity: 0;
+    transition: all .3s;
 }
 
 #game {
